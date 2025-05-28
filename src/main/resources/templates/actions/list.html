@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/main :: head">
+    <style>
+        .action-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .action-card .card-body {
+            padding: 1.5rem;
+        }
+        
+        .action-card .card-title {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .action-card .card-text {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #f0f0f0;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(45deg, #2a9d8f, #264653);
+            border-radius: 4px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .stats span {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .btn-outline-primary {
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 157, 143, 0.2);
+        }
+        
+        .create-action-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+        }
+        
+        .create-action-card h5 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #2a9d8f;
+            box-shadow: 0 0 0 0.2rem rgba(42, 157, 143, 0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #2a9d8f, #264653);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 157, 143, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="layout/main :: nav"></div>
+
+    <div class="container main-content py-5">
+        <div class="row">
+            <div class="col-md-8">
+                <h1 class="mb-4" style="color: #2c3e50; font-weight: 600;">Actions Caritatives</h1>
+                
+                <div class="row">
+                    <div th:each="action : ${actions}" class="col-md-6 mb-4">
+                        <div class="action-card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${action.titre}">Titre de l'action</h5>
+                                <p class="card-text" th:text="${action.description}">Description de l'action...</p>
+                                <div class="mb-3">
+                                    <div class="stats">
+                                        <div>Objectif: <span th:text="${#numbers.formatDecimal(action.montantObjectif, 0, 'COMMA', 0, 'POINT')} + ' €'"></span></div>
+                                        <div>Collecté: <span th:text="${#numbers.formatDecimal(action.montantCollecte, 0, 'COMMA', 0, 'POINT')} + ' €'"></span></div>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" 
+                                             th:style="'width: ' + ${action.montantCollecte * 100 / action.montantObjectif} + '%'">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-primary" th:text="${action.statut}">Statut</span>
+                                    <a th:href="@{/actions/{id}(id=${action.id})}" class="btn btn-outline-primary">Voir détails</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="create-action-card">
+                    <h5>Créer une nouvelle action</h5>
+                    <form th:action="@{/actions}" method="post" th:object="${newAction}">
+                        <div class="mb-3">
+                            <label for="titre" class="form-label">Titre</label>
+                            <input type="text" class="form-control" id="titre" th:field="*{titre}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="montantObjectif" class="form-label">Objectif (€)</label>
+                            <input type="number" class="form-control" id="montantObjectif" th:field="*{montantObjectif}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dateFin" class="form-label">Date de fin</label>
+                            <input type="date" class="form-control" id="dateFin" th:field="*{dateFin}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Créer l'action</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="layout/main :: footer"></div>
+</body>
+</html> 

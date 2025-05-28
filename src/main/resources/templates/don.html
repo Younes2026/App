@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Faire un don - CharityApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #2ecc71;
+            --background-color: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .donation-hero {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), rgba(52, 152, 219, 0.9)),
+                        url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .donation-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(44, 62, 80, 0.8), rgba(52, 152, 219, 0.8));
+            z-index: 1;
+        }
+
+        .donation-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .donation-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .donation-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease 0.2s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .donation-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .donation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .donation-amount {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .amount-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .amount-option input[type="radio"] {
+            display: none;
+        }
+
+        .amount-option label {
+            display: block;
+            padding: 15px;
+            text-align: center;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .amount-option input[type="radio"]:checked + label {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        .amount-option label:hover {
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .custom-amount {
+            margin-top: 20px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .donation-features {
+            margin-top: 50px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-right: 20px;
+            width: 50px;
+            text-align: center;
+        }
+
+        .feature-text h4 {
+            margin: 0;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .feature-text p {
+            margin: 5px 0 0;
+            color: #666;
+        }
+
+        footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin-left: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+            box-shadow: var(--card-shadow);
+        }
+
+        .alert-success {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .alert-danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">CharityApp</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/actions">Actions Caritatives</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/don">Faire un don</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/login">Connexion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/register">Inscription</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="donation-hero">
+        <div class="container donation-content">
+            <h1 class="donation-title">Faites un don aujourd'hui</h1>
+            <p class="donation-subtitle">Votre contribution peut changer des vies. Chaque don compte.</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Messages de succès ou d'erreur -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="donation-card">
+                    <h2 class="mb-4">Choisissez le montant de votre don</h2>
+                    <form th:action="@{/don}" method="post">
+                        <div class="donation-amount">
+                            <div class="amount-option">
+                                <input type="radio" name="montant" id="amount10" value="10" required>
+                                <label for="amount10">10 €</label>
+                            </div>
+                            <div class="amount-option">
+                                <input type="radio" name="montant" id="amount20" value="20">
+                                <label for="amount20">20 €</label>
+                            </div>
+                            <div class="amount-option">
+                                <input type="radio" name="montant" id="amount50" value="50">
+                                <label for="amount50">50 €</label>
+                            </div>
+                        </div>
+
+                        <div class="custom-amount">
+                            <label for="montant" class="form-label">Ou entrez un montant personnalisé</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="montant" name="montant" min="1" step="1">
+                                <span class="input-group-text">€</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label for="action" class="form-label">Choisissez une action</label>
+                            <select class="form-control" id="action" name="actionId" required>
+                                <option value="">Sélectionnez une action</option>
+                                <option th:each="action : ${actions}"
+                                        th:value="${action.id}"
+                                        th:text="${action.titre}">Action</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-4">Faire un don</button>
+                    </form>
+                </div>
+
+                <div class="donation-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Don sécurisé</h4>
+                            <p>Vos informations sont protégées et vos dons sont sécurisés.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Reçu fiscal</h4>
+                            <p>Recevez un reçu fiscal pour votre don.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Suivi transparent</h4>
+                            <p>Suivez l'impact de votre don sur nos actions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="donation-card">
+                    <h3 class="mb-4">Pourquoi faire un don ?</h3>
+                    <p>Votre don nous permet de :</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i> Soutenir des causes importantes</li>
+                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i> Aider les personnes dans le besoin</li>
+                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i> Développer de nouveaux projets</li>
+                        <li class="mb-3"><i class="fas fa-check text-success me-2"></i> Créer un impact positif</li>
+                    </ul>
+                    <div class="mt-4">
+                        <h4>Votre impact</h4>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" role="progressbar" style="width: 75%"></div>
+                        </div>
+                        <p class="text-muted">75% de nos objectifs atteints grâce à vos dons</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="copyright">
+                    <p class="mb-0">&copy; 2024 CharityApp. Tous droits réservés.</p>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
